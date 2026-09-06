@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "referrer-policy", "value": "no-referrer" },
+        { "key": "x-content-type-options", "value": "nosniff" }
+      ]
+    }
+  ]
+}

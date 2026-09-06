@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
+<style>
+/* ============================================================
+   MORNING BRIEF — tokens
+   Light: cool paper, pre-dawn. Dark: blue-black, the hour before
+   sunrise. The single warm value on the page is the marigold
+   accent — it is the sun coming up, and it is spent only on the
+   corroboration tally and section rules.
+   ============================================================ */
+:root {
+  --ground:      #F1F4F7;
+  --surface:     #FBFCFD;
+  --surface-2:   #E9EEF3;
+  --ink:         #10161C;
+  --ink-mid:     #414F5C;
+  --ink-soft:    #6C7B89;
+  --rule:        #D6DEE6;
+  --rule-soft:   #E5EBF1;
+  --accent:      #A9640F;
+  --accent-mark: #C07A1D;
+  --accent-dim:  #F0E1CC;
+  --shadow:      0 1px 2px rgba(16,22,28,.05), 0 8px 24px -12px rgba(16,22,28,.14);
+
+  --f-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --col: 46rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #0C1218;
+    --surface:     #131B23;
+    --surface-2:   #1B2530;
+    --ink:         #E7EDF3;
+    --ink-mid:     #AFBDCA;
+    --ink-soft:    #7C8B9A;
+    --rule:        #24313D;
+    --rule-soft:   #1A242E;
+    --accent:      #EBA94C;
+    --accent-mark: #D9942F;
+    --accent-dim:  #2C2115;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:      #0C1218;
+  --surface:     #131B23;
+  --surface-2:   #1B2530;
+  --ink:         #E7EDF3;
+  --ink-mid:     #AFBDCA;
+  --ink-soft:    #7C8B9A;
+  --rule:        #24313D;
+  --rule-soft:   #1A242E;
+  --accent:      #EBA94C;
+  --accent-mark: #D9942F;
+  --accent-dim:  #2C2115;
+  --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+
+.wrap { max-width: var(--col); margin: 0 auto; padding: 0 1.375rem 5rem; }
+
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------------- masthead ---------------- */
+.masthead { padding: 2.75rem 0 1.25rem; border-bottom: 2px solid var(--ink); }
+.mast-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.masthead h1 {
+  font-family: var(--f-display); font-weight: 500;
+  font-size: clamp(2.5rem, 10vw, 3.75rem);
+  line-height: .95; letter-spacing: -.022em; margin: 0;
+}
+.mast-actions { display: flex; gap: .375rem; padding-top: .5rem; }
+.iconbtn {
+  font-family: var(--f-mono); font-size: .68rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-soft);
+  background: transparent; border: 1px solid var(--rule);
+  padding: .4rem .6rem; border-radius: 3px; cursor: pointer; white-space: nowrap;
+}
+.iconbtn:hover { color: var(--accent); border-color: var(--accent-mark); }
+.dateline {
+  display: flex; flex-wrap: wrap; gap: .4rem 1.125rem; margin-top: 1rem;
+  font-family: var(--f-mono); font-size: .7rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.dateline .now { color: var(--accent); }
+
+/* ---------------- topic picker ---------------- */
+.picker { border-bottom: 1px solid var(--rule); }
+.picker-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .875rem 0; cursor: pointer; width: 100%;
+  background: none; border: 0; text-align: left; color: inherit; font: inherit;
+}
+.picker-bar:hover .picker-label { color: var(--accent); }
+.picker-label {
+  font-family: var(--f-mono); font-size: .72rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-mid); display: flex;
+  align-items: center; gap: .5rem;
+}
+.chev { transition: transform .18s ease; font-size: .6rem; color: var(--ink-soft); }
+.picker.open .chev { transform: rotate(180deg); }
+.picker-count {
+  font-family: var(--f-mono); font-size: .72rem; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.picker-count.full { color: var(--accent); }
+.picker-body { padding: .25rem 0 1.5rem; }
+
+.selected-row {
+  display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.125rem;
+  padding-bottom: 1.125rem; border-bottom: 1px dashed var(--rule);
+}
+.selected-row:empty { display: none; }
+.seltag {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-family: var(--f-mono); font-size: .72rem; letter-spacing: .04em;
+  background: var(--accent-dim); color: var(--accent);
+  border: 1px solid var(--accent-mark); border-radius: 3px;
+  padding: .3rem .3rem .3rem .55rem; cursor: grab;
+}
+.seltag[draggable="true"]:active { cursor: grabbing; }
+.seltag.dragging { opacity: .4; }
+.seltag .ord { opacity: .6; font-variant-numeric: tabular-nums; }
+.seltag button {
+  border: 0; background: none; color: inherit; cursor: pointer;
+  font-size: .85rem; line-height: 1; padding: .1rem .2rem; opacity: .7;
+}
+.seltag button:hover { opacity: 1; }
+
+.picker-sub {
+  font-family: var(--f-mono); font-size: .66rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .6rem;
+}
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
+.chip {
+  font-family: var(--f-body); font-size: .8125rem; font-weight: 450;
+  background: var(--surface); color: var(--ink-mid);
+  border: 1px solid var(--rule); border-radius: 3px;
+  padding: .35rem .7rem; cursor: pointer;
+}
+.chip:hover { border-color: var(--accent-mark); color: var(--accent); }
+.chip[aria-pressed="true"] {
+  background: var(--ink); color: var(--ground); border-color: var(--ink);
+}
+.chip:disabled { opacity: .38; cursor: not-allowed; }
+.chip:disabled:hover { border-color: var(--rule); color: var(--ink-mid); }
+.chip .n { font-family: var(--f-mono); font-size: .68rem; opacity: .55; margin-left: .35rem; }
+
+.custom-form { display: flex; gap: .4rem; }
+.custom-form input {
+  flex: 1; min-width: 0; font-family: var(--f-body); font-size: .8125rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 3px; padding: .45rem .65rem;
+}
+.custom-form input::placeholder { color: var(--ink-soft); }
+.custom-form button {
+  font-family: var(--f-mono); font-size: .72rem; letter-spacing: .06em;
+  text-transform: uppercase; background: var(--ink); color: var(--ground);
+  border: 1px solid var(--ink); border-radius: 3px; padding: .45rem .8rem; cursor: pointer;
+}
+.custom-form button:disabled { opacity: .38; cursor: not-allowed; }
+.hint { font-size: .75rem; color: var(--ink-soft); margin: .5rem 0 0; }
+
+/* ---------------- one minute ---------------- */
+.oneminute { padding: 2rem 0 .5rem; }
+.om-head {
+  font-family: var(--f-mono); font-size: .68rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 .875rem;
+}
+.oneminute ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
+.oneminute li {
+  position: relative; padding-left: 1.5rem;
+  font-family: var(--f-display); font-size: 1.0625rem; line-height: 1.45;
+  color: var(--ink);
+}
+.oneminute li::before {
+  content: ""; position: absolute; left: .3rem; top: .62em;
+  width: 5px; height: 5px; background: var(--accent-mark);
+}
+
+/* ---------------- top of the brief ---------------- */
+.section-rule {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  padding-bottom: .7rem; border-bottom: 1px solid var(--ink); margin-bottom: .25rem;
+}
+.section-rule h2 {
+  font-family: var(--f-mono); font-size: .8125rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; margin: 0;
+}
+.section-rule .meta {
+  font-family: var(--f-mono); font-size: .68rem; letter-spacing: .06em;
+  color: var(--ink-soft); white-space: nowrap;
+}
+.topsec { padding-top: 2.5rem; }
+.topgrid { display: grid; gap: 1.75rem; padding-top: 1.5rem; }
+@media (min-width: 46rem) { .topgrid { grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; } }
+
+.tcard { display: flex; flex-direction: column; gap: .7rem; }
+.tcard .shot { aspect-ratio: 3 / 2; }
+.tcard h3 {
+  font-family: var(--f-display); font-weight: 500; font-size: 1.15rem;
+  line-height: 1.24; letter-spacing: -.008em; margin: 0; text-wrap: balance;
+}
+
+/* ---------------- topic sections ---------------- */
+.topic { padding-top: 3rem; }
+.story { padding: 1.6rem 0; border-bottom: 1px solid var(--rule-soft); }
+.story:last-child { border-bottom: none; }
+
+.story-meta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .35rem .7rem; margin-bottom: .55rem;
+}
+/* The rotated fifth stroke leans past the last upright, so the box carries a
+   little right padding — without it the overhang gives the page a sideways scroll. */
+.tally { display: inline-flex; align-items: flex-end; gap: 2px; height: .78rem; flex: none; padding-right: 6px; }
+.tally i { display: block; width: 2px; height: 100%; background: var(--accent-mark); }
+.tally i:nth-child(5n) {
+  transform: rotate(28deg) scaleY(1.28); transform-origin: bottom center; margin: 0 2px 0 -6px;
+}
+.why {
+  font-family: var(--f-mono); font-size: .67rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--accent);
+}
+.story h3 {
+  font-family: var(--f-display); font-weight: 500; font-size: 1.3rem;
+  line-height: 1.26; letter-spacing: -.009em; margin: 0 0 .5rem; text-wrap: balance;
+}
+.story.lead h3 { font-size: 1.75rem; line-height: 1.18; }
+h3 a {
+  color: inherit; text-decoration: none;
+  background-image: linear-gradient(var(--rule), var(--rule));
+  background-size: 100% 1px; background-position: 0 100%; background-repeat: no-repeat;
+}
+h3 a:hover { color: var(--accent); background-image: linear-gradient(var(--accent), var(--accent)); }
+.story p, .tcard p {
+  margin: 0 0 .7rem; color: var(--ink-mid); font-size: .9375rem; line-height: 1.6;
+}
+.tcard p { font-size: .875rem; }
+.credit {
+  font-family: var(--f-mono); font-size: .71rem; color: var(--ink-soft);
+  display: flex; flex-wrap: wrap; gap: .25rem .45rem; align-items: baseline;
+}
+.credit .outlet { color: var(--ink-mid); font-weight: 500; }
+.credit .sep { opacity: .4; }
+.alsoin {
+  margin-top: .5rem; font-family: var(--f-mono); font-size: .69rem;
+  line-height: 1.5; color: var(--ink-soft);
+}
+.alsoin b {
+  font-weight: 500; color: var(--accent); letter-spacing: .05em;
+  text-transform: uppercase; font-size: .64rem;
+}
+
+/* photo plate — .shot wraps every image so a missing photo still has a shape */
+.shot {
+  position: relative; overflow: hidden; border-radius: 2px;
+  background: var(--surface-2); border: 1px solid var(--rule-soft);
+}
+.shot img { width: 100%; height: 100%; object-fit: cover; }
+/* Some stories have a seal or logo rather than a photograph. Contain it on its
+   own ground so it reads as a mark, and hold it back in the big lead slot where
+   a full-bleed emblem would shout over the headline. */
+.shot.mark { background: var(--surface); }
+.shot.mark img { object-fit: contain; padding: 12%; }
+.story.lead .shot.mark img { padding: 17% 30%; }
+.tcard .shot.mark img { padding: 15% 22%; }
+.shot .fallback {
+  position: absolute; inset: 0; display: flex; align-items: flex-end;
+  padding: .6rem .7rem; background: var(--accent-dim);
+  font-family: var(--f-mono); font-size: .62rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); line-height: 1.35;
+}
+.shot .fallback span { display: block; }
+
+/* horizontal story rows */
+.story.row { display: grid; grid-template-columns: 5.5rem 1fr; gap: 1rem; align-items: start; }
+.story.row .shot { aspect-ratio: 1 / 1; }
+@media (min-width: 34rem) {
+  .story.row { grid-template-columns: 8.5rem 1fr; gap: 1.25rem; }
+  .story.row .shot { aspect-ratio: 4 / 3; }
+}
+.story.lead .shot { aspect-ratio: 16 / 9; margin-bottom: .9rem; }
+
+/* ---------------- empty / colophon ---------------- */
+.empty {
+  padding: 1.5rem 0 .5rem; color: var(--ink-soft); font-size: .9rem;
+}
+.empty code {
+  font-family: var(--f-mono); font-size: .82rem; color: var(--accent);
+  background: var(--accent-dim); padding: .1rem .35rem; border-radius: 2px;
+}
+.nothing { padding: 4rem 0; text-align: center; color: var(--ink-soft); }
+.nothing p { font-family: var(--f-display); font-size: 1.25rem; color: var(--ink-mid); }
+
+.colophon {
+  margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule);
+  font-family: var(--f-mono); font-size: .69rem; line-height: 1.75;
+  color: var(--ink-soft); letter-spacing: .02em;
+}
+.colophon b { color: var(--ink-mid); font-weight: 500; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+@media print {
+  .picker, .mast-actions, .alsoin { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .wrap { max-width: none; padding: 0; }
+  .story { break-inside: avoid; }
+  .shot { border: none; }
+  a { text-decoration: none; color: #000; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="mast-top">
+      <h1>Morning&nbsp;Brief</h1>
+      <div class="mast-actions">
+        <button class="iconbtn" id="themeBtn" type="button">Theme</button>
+        <button class="iconbtn" id="printBtn" type="button">Print</button>
+      </div>
+    </div>
+    <div class="dateline">
+      <span id="dlDate"></span>
+      <span class="now" id="dlBuilt"></span>
+      <span id="dlCount"></span>
+    </div>
+  </header>
+
+  <div class="picker" id="picker">
+    <button class="picker-bar" id="pickerBar" type="button" aria-expanded="false" aria-controls="pickerBody">
+      <span class="picker-label">Your topics <span class="chev">&#9660;</span></span>
+      <span class="picker-count" id="pickerCount">0 / 10</span>
+    </button>
+    <div class="picker-body" id="pickerBody" hidden>
+      <div class="selected-row" id="selectedRow"></div>
+      <p class="picker-sub">Choose from</p>
+      <div class="chips" id="presetChips"></div>
+      <p class="picker-sub">Or add your own</p>
+      <form class="custom-form" id="customForm">
+        <input type="text" id="customInput" placeholder="Anything &mdash; try &ldquo;ukraine&rdquo;, &ldquo;coffee&rdquo;, &ldquo;wolves&rdquo;" maxlength="40" autocomplete="off">
+        <button type="submit" id="customBtn">Add</button>
+      </form>
+      <p class="hint">Drag the tags above to reorder your brief. Up to ten topics.</p>
+    </div>
+  </div>
+
+  <main id="brief"></main>
+
+  <p class="colophon">
+    <b>How stories are chosen.</b> Every candidate is scored on five signals &mdash; how many independent
+    outlets carry it, how recently it broke, the standing of the outlet, how well it fits the topic,
+    and where it sat on the section front. Corroboration is weighted heaviest, so the tally marks
+    beside each headline are close to the ranking itself. Near-duplicates are clustered before
+    scoring, and no story runs twice inside a section or across two sections &mdash; Top of the brief
+    is the one place a story repeats, the way a front page trails what is inside.<br>
+    <b>Sourcing.</b> Headlines link to the original publication. Summaries are written from headlines,
+    excerpts and reporting metadata; no article text is reproduced. Photographs are freely-licensed
+    subject images from Wikimedia Commons except where a publisher photo is credited on the card.<br>
+    <b>This build.</b> Fifty stories gathered and verified by hand on Saturday, 5 September 2026.
+    Scoring, clustering and assembly run live in your browser &mdash; change your topics and the brief
+    is rebuilt from the corpus.
+  </p>
+
+</div>
+
+<script>
+/* ==========================================================================
+   1. RANKING — the whole scoring model lives here. Change these five numbers
+      and the brief reorders. Nothing else in the file needs touching.
+   ========================================================================== */
+const WEIGHTS = {
+  corroboration: 0.42,  // how many independent outlets carry the story — the strongest signal of importance
+  recency:       0.22,  // exponential decay on hours since publication; today outranks yesterday
+  sourceTier:    0.14,  // standing of the outlet that ran the version we link to
+  topicFit:      0.16,  // how squarely the story sits in the topic asked for, not just keyword presence
+  prominence:    0.06   // where it sat on its section front — lead position is editorial judgement, borrowed
+};
+
+const RECENCY_HALFLIFE_HOURS = 20;   // a story is worth half as much once it is this old
+const CLUSTER_THRESHOLD      = 0.42; // title-token overlap above which two items are the same story
+const NOW = new Date('2026-09-05T07:10:00');
+
+/* Outlet standing. Anything unlisted scores 0.62. */
+const TIER = {
+  'Reuters':1,'AP':1,'NPR':1,'BBC':1,'PBS NewsHour':1,'The Washington Post':1,'The New York Times':1,
+  'Al Jazeera':1,'CNN':1,'CBC':1,'Nature':1,'Science':.95,'NASA':.95,
+  'CNBC':.85,'NBC News':.85,'CBS News':.85,'Axios':.85,'TIME':.85,'The Hill':.85,'Bloomberg':.9,
+  'Variety':.85,'The Hollywood Reporter':.85,'Deadline':.8,'TechCrunch':.85,'The Verge':.85,
+  'Space.com':.8,'Live Science':.78,'Smithsonian':.85,'ESPN':.85,'Sports Illustrated':.8,
+  'CBS Sports':.8,'Phys.org':.75,'ScienceDaily':.72,'Detroit News':.75,'Anthropic':.8,
+  'VentureBeat':.7,'SiliconANGLE':.68,'Neowin':.62,'Bleacher Report':.65,'NBC New York':.8,
+  'Restaurant Dive':.7,'The Food Institute':.65,'The Trek':.65,'UPI':.75,'Africanews':.7,
+  'Malay Mail':.62,'NCAA':.75,'Microsoft AI':.7,'FDA':.9,'The ASCO Post':.75
+};
+const tierOf = o => TIER[o] !== undefined ? TIER[o] : 0.62;
+
+/* ==========================================================================
+   2. THE CORPUS — 50 stories, gathered 5 September 2026.
+      t: topic ids · also: other outlets carrying it (drives the tally)
+      pr: section-front prominence 0-1 · kw: extra terms for custom topics
+   ========================================================================== */
+const T = {
+  world:'World', politics:'Politics', economy:'Economy & Markets', tech:'Technology',
+  science:'Science', health:'Health', sport:'Sport', food:'Food & Cooking',
+  film:'Film & TV', offbeat:'Offbeat'
+};
+
+const W = 'https://upload.wikimedia.org/wikipedia/commons/';
+const CORPUS = [
+/* ---- WORLD ---- */
+{id:'w1', t:['world','politics'], pr:1,
+ h:'Witkoff and Kushner meet Putin for three hours, then head to Kyiv with a proposal',
+ u:'https://www.npr.org/2026/09/05/nx-s1-5959114/us-envoys-in-moscow-in-new-push-for-peace',
+ o:'NPR', also:['CNN','CNBC','CBS News','The Hill','NBC News','Reuters'], pub:'2026-09-05T04:00',
+ sum:'US envoys Steve Witkoff and Jared Kushner met Vladimir Putin at the Kremlin on Saturday and travel to Kyiv on Sunday carrying a peace proposal. Putin ordered a three-day halt to strikes on Kyiv to cover the delegation’s visit but stopped short of a wider ceasefire. Zelenskyy said Russian strikes hit Kyiv and Boryspil airports overnight and tied them directly to preparations for the American visit.',
+ img:W+'4/46/Moscow_Kremlin_%288281675670%29.jpg', ik:'photo', ic:'Moscow Kremlin · Wikimedia Commons',
+ kw:'ukraine russia putin zelenskyy peace talks kremlin diplomacy war'},
+
+{id:'w2', t:['world'], pr:.95,
+ h:'US disables three Iranian oil tankers after missiles are fired at Navy warships',
+ u:'https://www.pbs.org/newshour/world/u-s-military-hits-3-iranian-oil-tankers-after-saying-navy-ships-were-targeted-with-missiles',
+ o:'PBS NewsHour', also:['NPR','CNN','CBC','NBC News','CNBC','Al Jazeera','Reuters'], pub:'2026-09-05T02:30',
+ sum:'American forces permanently disabled two Iranian crude carriers and destroyed a third after the Islamic Revolutionary Guard Corps launched ballistic missiles at two US Navy ships. No American personnel were hurt, and the crew of the third tanker was ordered off before the strike. CENTCOM described the vessels as part of a shadow fleet funding the IRGC and its regional proxies.',
+ img:W+'f/f1/Seal_of_the_Army_of_the_Guardians_of_the_Islamic_Revolution.svg', ik:'mark', ic:'IRGC seal · Wikimedia Commons',
+ kw:'iran united states military navy strike tanker irgc middle east gulf'},
+
+{id:'w3', t:['world','politics'], pr:.8,
+ h:'Sara Duterte posts bail a day after a court orders her arrest',
+ u:'https://www.npr.org/2026/09/05/g-s1-142148/philippines-vice-president-posts-bail',
+ o:'NPR', also:['The Washington Post','TIME','Malay Mail','Reuters','AP'], pub:'2026-09-05T05:15',
+ sum:'The Philippine vice president posted 360,000 pesos bail in Manila on Saturday on three counts of grave threats. The charges stem from a 2024 briefing in which she said she had arranged for a hitman to kill President Ferdinand Marcos Jr. should she be killed first; she says the remarks were misconstrued. The same allegation is central to her Senate impeachment trial, where a conviction would remove her from office and bar her from politics permanently.',
+ img:W+'a/a6/Vice_President_Sara_Duterte_portrait_%28cropped%29.jpg', ik:'photo', ic:'Official portrait · Wikimedia Commons',
+ kw:'philippines duterte marcos manila bail impeachment southeast asia'},
+
+{id:'w4', t:['world','health'], pr:.7, why:'Fastest-growing on record',
+ h:'Congo’s Ebola outbreak passes 6,000 cases and 2,911 deaths',
+ u:'https://www.aljazeera.com/news/2026/8/31/over-6000-ebola-cases-confirmed-in-drc-as-death-toll-nears-3000',
+ o:'Al Jazeera', also:['Africanews','Medical Daily','Nairametrics'], pub:'2026-08-31T12:00',
+ sum:'The outbreak in eastern Democratic Republic of Congo is now the country’s largest on record, with 6,041 confirmed cases and 1,366 recoveries. It is caused by the Bundibugyo strain, for which there is no approved vaccine or treatment. It crossed 1,000 cases within 40 days of the response starting; the 2018 outbreak in the same region took roughly 235 days to reach that point.',
+ img:'https://aje.news/wp-content/uploads/2026/08/2026-08-21T112532Z_833741802_RC2CDMA8G9H7_RTRMADP_3_HEALTH-EBOLA-UN-1788186460.jpg?resize=770%2C513&quality=80',
+ ik:'photo', ic:'Gradel Muyisa Mumbere / Reuters',
+ kw:'ebola congo drc outbreak epidemic africa virus health bundibugyo'},
+
+{id:'w5', t:['world'], pr:.5,
+ h:'Thailand cuts visa-free stays from 60 days to 30 for sixty countries',
+ u:'https://www.tatnews.org/2026/09/thailand-introduces-new-30-day-and-15-day-visa-exemption-rules-from-15-september/',
+ o:'TAT Newsroom', also:['The Thaiger','Human Resources Online','Chiang Rai Times'], pub:'2026-09-03T09:00',
+ sum:'From 15 September the 60-day visa exemption is replaced by 30-day and 15-day categories covering sixty countries and territories. The new exemption is tourism-only: anyone arriving to work needs a Non-Immigrant B visa first. Land-border entries under the exemption are capped at twice a year for most nationalities, and travellers arriving on or before 14 September keep the current 60-day stamp.',
+ img:W+'7/7d/4Y1A1159_Bangkok_%2833536795515%29.jpg', ik:'photo', ic:'Bangkok · Wikimedia Commons',
+ kw:'thailand visa travel tourism bangkok immigration southeast asia'},
+
+/* ---- POLITICS ---- */
+{id:'p1', t:['politics','tech'], pr:1,
+ h:'Data centres have become the midterms’ unlikely villain, and both parties are spending on it',
+ u:'https://www.npr.org/2026/09/05/nx-s1-5913671/ai-data-center-campaign-spending',
+ o:'NPR', also:['CNN','CNBC','KPBS','STLPR','Maine Public','HPPR'], pub:'2026-09-05T06:00',
+ sum:'More than $45 million has gone into ads mentioning data centres in this year’s governor, House and Senate races, and over 99% of it attacks the projects. Last month data-centre and AI spots took more than 8% of all campaign spending on broadcast television. The AI industry is pushing the other way, with executives at OpenAI and Anthropic among the donors behind an estimated $265 million flowing to super PACs this cycle.',
+ img:W+'5/57/Data_Center_of_CNPC.jpg', ik:'photo', ic:'Data centre · Wikimedia Commons',
+ kw:'midterms election data centers ai campaign ads politics super pac electricity'},
+
+{id:'p2', t:['politics','science'], pr:.9,
+ h:'Trump orders a review that could strip Endangered Species Act protection from gray wolves',
+ u:'https://www.detroitnews.com/story/news/nation/2026/09/05/wolf-protections-ranchers-review-trump/91631576007/',
+ o:'Detroit News', also:['The Washington Post','The Hill','Spokesman-Review','Yahoo News'], pub:'2026-09-04T18:00',
+ sum:'Interior Secretary Doug Burgum has 90 days to recommend whether the gray wolf and the Mexican wolf should be delisted or downlisted. The order also directs Interior and Agriculture to revisit rules on lethal removal, livestock compensation and emergency response. Wolves were listed in the 1960s and 70s after settlement cut their range by an estimated 95%; a 2020 delisting was vacated by a federal judge in 2022.',
+ img:W+'6/68/Eurasian_wolf_2.jpg', ik:'photo', ic:'Gray wolf · Wikimedia Commons',
+ kw:'wolves endangered species act ranchers conservation trump interior wildlife'},
+
+{id:'p3', t:['politics','tech'], pr:.7,
+ h:'Florida orders every licence plate reader off state roads within 30 days',
+ u:'https://www.nbcnews.com/tech/tech-news/florida-bans-flock-license-plate-readers-state-highways-rcna595420',
+ o:'NBC News', also:['Engadget','Fox Business','Orlando Weekly','WFLX','Insurance Journal','WTSP'], pub:'2026-09-01T18:00',
+ sum:'A Department of Transportation memo gives local agencies 30 days to remove automated licence plate readers, Flock cameras included, from Florida state highways. It cites an exponential increase in deployments alongside reports of misuse, data privacy concerns and surveillance schemes. State records document more than 8,000 Flock cameras across Florida; DeSantis called the technology “out of control” in August and pushed for the ban.',
+ img:W+'4/4f/Ron_DeSantis_official_photo.jpg', ik:'photo', ic:'Official portrait · Wikimedia Commons',
+ kw:'surveillance license plate readers flock cameras desantis florida privacy police'},
+
+{id:'p4', t:['politics'], pr:.55,
+ h:'Watchdog finds the former labour secretary ran a “toxic, intimidating and humiliating” department',
+ u:'https://www.npr.org/2026/09/04/nx-s1-5958601/labor-department-inspector-general-secretary-chavez-deremer',
+ o:'NPR', also:['NBC News','PBS NewsHour','KPBS','HPPR','Prairie Public'], pub:'2026-09-04T16:30',
+ sum:'The Labor Department’s inspector general found Lori Chavez-DeRemer violated her own department’s harassment policy, created a hostile work environment, combined personal and official travel improperly, kept and drank alcohol on federal property and accepted unreported gifts. The months-long inquiry began with an anonymous complaint that also alleged a relationship with a member of her security detail. Investigators stopped short of finding that she or her staff broke federal law; she resigned in April, before the report was finished.',
+ img:W+'c/c1/Seal_of_the_United_States_Department_of_Labor.svg', ik:'mark', ic:'Department of Labor seal · Wikimedia Commons',
+ kw:'labor department harassment chavez-deremer resignation investigation cabinet'},
+
+{id:'p5', t:['politics','world'], pr:.6,
+ h:'Trump calls the Iran conflict “small potatoes” a day before US strikes on tankers',
+ u:'https://www.aljazeera.com/news/2026/9/4/small-potatoes-us-president-trump-downplays-war-on-iran',
+ o:'Al Jazeera', also:['PBS NewsHour','NBC New York','The Daily Beast','Bangor Daily News','Raw Story'], pub:'2026-09-04T19:00',
+ sum:'Asked in the Oval Office about Vance’s claim that the Iran clashes are not a war, the president agreed: “I call it a military conflict because it’s small potatoes for us.” The conflict has killed 18 US service members and pushed global energy prices up, and he drew a comparison with the January operation to seize Venezuela’s president — “In Venezuela, we lost nobody. In this, we lost 18 people.” US forces struck three Iranian tankers the following day.',
+ img:W+'e/ec/View_of_Oval_Office_in_2017.jpg', ik:'photo', ic:'Oval Office · Wikimedia Commons',
+ kw:'trump iran white house oval office war remarks escalation'},
+
+/* ---- ECONOMY & MARKETS ---- */
+{id:'e1', t:['economy'], pr:1, why:'Jobs beat forecast by 3x',
+ h:'Stocks slip after a jobs report three times bigger than forecast',
+ u:'https://www.cnbc.com/2026/09/03/stock-market-today-live-updates.html',
+ o:'CNBC', also:['Bloomberg','TheStreet','Yahoo Finance','Zacks'], pub:'2026-09-04T21:00',
+ sum:'The US added 162,000 jobs in August against a consensus estimate of 55,000, and markets read it as a rate-hike signal rather than good news. The Dow fell 271.86 points to 53,414.25, the S&P 500 slid 0.38% to 7,718.60 and the Nasdaq dropped 0.29% to 26,506.99. Futures now imply roughly a 58% chance of a hike this month, up from about 50% the day before, with the two-year Treasury yield at 4.37%.',
+ img:W+'7/78/New_York_Stock_Exchange_Facade_2015.jpg', ik:'photo', ic:'NYSE · Wikimedia Commons',
+ kw:'stocks market jobs report federal reserve rate hike dow nasdaq treasury yields economy'},
+
+{id:'e2', t:['economy','tech'], pr:.85,
+ h:'Uber cuts 3,300 jobs and pulls out of Nigeria and Uganda',
+ u:'https://techcrunch.com/2026/09/02/uber-is-laying-off-10-of-staff-or-3300-people/',
+ o:'TechCrunch', also:['Bloomberg','Al Jazeera','TechXplore','YourStory'], pub:'2026-09-02T15:00',
+ sum:'An internal email from Dara Khosrowshahi, published the same day, put the reduction at 10% of staff and confirmed the company is leaving Nigeria and Uganda entirely. The restructuring shrinks the manager ranks by 20%, with some of those people moving to individual contributor roles, and redirects spending toward rides, delivery and robotaxis. It is Uber’s largest headcount cut since the pandemic.',
+ img:W+'6/66/Uber_offices%2C_Mission_Bay_%28July_2020%29_-2.jpg', ik:'photo', ic:'Uber offices · Wikimedia Commons',
+ kw:'uber layoffs jobs cuts workforce technology gig economy'},
+
+{id:'e3', t:['economy','food'], pr:.7,
+ h:'Campbell’s cuts 13% of salaried staff and will raise prices on most of its range',
+ u:'https://www.inquirer.com/business/campbells-layoffs-camden-nj-20260903.html',
+ o:'The Philadelphia Inquirer', also:['WHYY','WVIA','MSN','Squawk News'], pub:'2026-09-03T13:00',
+ sum:'The Camden soup and snack maker shed about 515 salaried roles through voluntary early retirement and layoffs after swinging to a quarterly loss on soft demand and higher costs. It has closed two snack facilities and plans to raise prices on roughly 60% of its products. The cuts sit inside a wider half-billion-dollar cost programme.',
+ img:W+'6/6b/CampbellSoupCompanyHQ.jpg', ik:'photo', ic:'Campbell’s headquarters · Wikimedia Commons',
+ kw:'campbells layoffs food company packaged goods restructuring consumer'},
+
+{id:'e4', t:['economy'], pr:.6, why:'Rate-hike odds jump to 58%',
+ h:'Futures markets swing towards a September rate hike',
+ u:'https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-sept-04-2026',
+ o:'TheStreet', also:['CNBC','Bloomberg','Yahoo Finance'], pub:'2026-09-04T20:00',
+ sum:'The implied probability of a Federal Reserve rate rise this month climbed to about 58% from roughly 50% a day earlier, on the back of the August payrolls surprise. Short-dated Treasuries moved most, with the two-year yield rising to about 4.37%. A hike would reverse the easing path markets had been pricing since the spring.',
+ img:W+'1/1a/Seal_of_the_United_States_Federal_Reserve_System.svg', ik:'mark', ic:'Federal Reserve seal · Wikimedia Commons',
+ kw:'federal reserve interest rates hike inflation treasury yields monetary policy'},
+
+{id:'e5', t:['economy'], pr:.45,
+ h:'2026 layoffs pass 209,000 workers across 365 separate events',
+ u:'https://www.trueup.io/layoffs',
+ o:'TrueUp', also:['Intellizence','SkillSyncer'], pub:'2026-09-04T12:00',
+ sum:'Trackers counting announced US job cuts put the running total at 209,032 workers across 365 events so far this year, an average of about 846 a day. Oracle’s 30,000-person reduction remains the single largest. The pace has been sustained rather than spiking, which is unusual outside a recession.',
+ img:W+'a/a7/Wall_Street_%2855314253740%29.jpg', ik:'photo', ic:'Wall Street · Wikimedia Commons',
+ kw:'layoffs unemployment jobs cuts oracle labor market economy hiring'},
+
+/* ---- TECHNOLOGY ---- */
+{id:'t1', t:['tech'], pr:1,
+ h:'OpenAI ships GPT-6 Astra and says the AGI era has arrived',
+ u:'https://www.axios.com/2026/09/03/openai-astra-gpt-6-agi-brockman',
+ o:'Axios', also:['The Information','VentureBeat','The New Stack','Slashdot','Wikipedia'], pub:'2026-09-03T17:00',
+ sum:'OpenAI released Astra in limited preview on 3 September, built on its largest training run to date across more than 100,000 GPUs at the Stargate site in Texas. President Greg Brockman called it a generational leap and closed the briefing with “Welcome to the AGI era.” It is also the first OpenAI model rated “critical” for cybersecurity under the company’s preparedness framework, meaning it can find and exploit unknown vulnerabilities without step-by-step guidance.',
+ img:W+'a/a7/1515_Third_Street.jpg', ik:'photo', ic:'OpenAI headquarters · Wikimedia Commons',
+ kw:'openai gpt-6 astra agi artificial intelligence model brockman stargate'},
+
+{id:'t2', t:['tech'], pr:.9,
+ h:'Regulators open a probe into Tesla’s Cybercabs days after launch',
+ u:'https://techcrunch.com/2026/09/04/feds-launch-investigation-into-teslas-cybercab-deployment/',
+ o:'TechCrunch', also:['CNBC','ABC News','Detroit News','Electrek','TechXplore','Yahoo Finance'], pub:'2026-09-04T12:01',
+ sum:'NHTSA is investigating roughly 1,000 Cybercabs now operating in Austin without steering wheels or brake pedals. The agency will examine the technical data Tesla used to self-certify the vehicles, including its conclusion that certain federal motor vehicle safety standards do not apply. Federal rules still require manual controls, though the Department of Transportation has proposed dropping that requirement for cars designed to drive themselves.',
+ img:'https://techcrunch.com/wp-content/uploads/2026/09/tesla-cybercab-street-getty.jpg?w=1024',
+ ik:'photo', ic:'Getty Images / TechCrunch',
+ kw:'tesla cybercab robotaxi nhtsa autonomous self-driving austin regulation'},
+
+{id:'t3', t:['tech'], pr:.8, why:'Undercuts three rivals on price',
+ h:'Microsoft’s new transcription model costs ten cents an hour',
+ u:'https://venturebeat.com/infrastructure/microsoft-ais-mai-transcribe-2-undercuts-openai-google-and-elevenlabs-on-price-and-speed',
+ o:'VentureBeat', also:['Neowin','eWeek','Reworked','Windows Report','Microsoft AI','AIbase'], pub:'2026-09-03T14:00',
+ sum:'MAI-Transcribe-2 launched on 3 September covering 60 languages at $0.10 per audio hour through the end of the year. Microsoft reports a 5.2% average word error rate on the FLEURS multilingual benchmark, first across all 60 languages, and processing about an hour of audio in ten seconds. That is roughly ten times faster than OpenAI’s GPT-Transcribe and five times faster than Google’s Gemini 3.5 Transcribe.',
+ img:W+'d/d6/Aerial_Microsoft_West_Campus_August_2009.jpg', ik:'photo', ic:'Microsoft campus · Wikimedia Commons',
+ kw:'microsoft transcription speech recognition ai model pricing openai google elevenlabs'},
+
+{id:'t4', t:['tech','science'], pr:.75, why:'Closes a 20-year benchmark',
+ h:'Claude agents formalise Fermat’s Last Theorem in eleven days',
+ u:'https://www.anthropic.com/research/formalizing-fermats-last-theorem',
+ o:'Anthropic', also:['SiliconANGLE','AI Weekly','Xena Project'], pub:'2026-09-04T10:00',
+ sum:'Dozens of Claude agents working on Columbia’s Prove2Me platform produced the first complete, machine-checked proof of Fermat’s Last Theorem in Lean 4, largely autonomously. The run generated 13 million lines of Lean and 30,300 theorems, about five times the size of Lean’s main library, on roughly six billion output tokens. Mathematicians had expected formalising Wiles’ proof to take years; it was the last unfinished item on Freek Wiedijk’s 20-year-old list of 100 formalisation challenges.',
+ img:W+'4/47/Diophantus-II-8-Fermat.jpg', ik:'photo', ic:'Fermat’s annotated Diophantus · Wikimedia Commons',
+ kw:'anthropic claude fermat mathematics lean proof formalization ai agents theorem'},
+
+{id:'t5', t:['tech','economy'], pr:.5,
+ h:'SoundHound closes its acquisition of LivePerson',
+ u:'https://techstartups.com/2026/09/04/top-tech-news-today-september-4-2026-amazon-google-microsoft-nvidia-openai-tesla-more/',
+ o:'Tech Startups', also:['Reuters'], pub:'2026-09-04T09:00',
+ sum:'The deal completed on 4 September, joining SoundHound’s voice and agentic AI to LivePerson’s digital messaging network. LivePerson’s footprint reaches 25 of the Fortune 100. It is a consolidation play in a customer-contact market being reshaped by conversational agents.',
+ img:'', ik:'none', ic:'',
+ kw:'soundhound liveperson acquisition voice ai messaging enterprise deal merger'},
+
+/* ---- SCIENCE ---- */
+{id:'s1', t:['science','offbeat'], pr:1, why:'Unexplained, and still growing',
+ h:'Hubble finds a ten-sided wave that has appeared around Saturn’s south pole',
+ u:'https://science.nasa.gov/missions/hubble/nasas-hubble-tracks-new-decagon-encircling-saturns-south-pole/',
+ o:'NASA', also:['Live Science','Space.com','Smithsonian','Phys.org','ScienceDaily','UC Berkeley','Science Advances'], pub:'2026-09-03T13:00',
+ sum:'A giant, evolving decagon has formed in one of Saturn’s southern jet streams, the first large regular-sided jet pattern seen in the planet’s southern hemisphere. Hubble data trace it back to 2023 and show it still strengthening; Cassini, which orbited from 2004 to 2017, never saw it. The wave extends vertically through several atmospheric layers and takes about 800 days to complete one rotation.',
+ img:W+'4/43/Saturn_global_view_from_Cassini%2C_rings_open_Better_Colour.png', ik:'photo', ic:'Cassini · NASA / Wikimedia Commons',
+ kw:'saturn hubble decagon hexagon atmosphere nasa planet astronomy jet stream space'},
+
+{id:'s2', t:['science','health'], pr:.85,
+ h:'A compound from sea squirts reversed several signs of ageing in old mice',
+ u:'https://www.sciencedaily.com/releases/2026/09/260902234518.htm',
+ o:'ScienceDaily', also:['Neuroscience News','EurekAlert','The Conversation','SciTechDaily'], pub:'2026-09-02T23:45',
+ sum:'Plasmalogen supplements derived from sea squirts improved memory and learning in aged mice, reduced age-related synapse loss in the hippocampus and quieted inflammatory microglia. The treated animals also grew thicker, darker coats while controls went grey and thin. The doses were far above anything a seafood meal provides, and the work has not been replicated in people.',
+ img:W+'f/fe/Cionaintestinalis.jpg', ik:'photo', ic:'Ciona intestinalis · Wikimedia Commons',
+ kw:'aging ageing sea squirt plasmalogen mice memory brain stanford longevity study'},
+
+{id:'s3', t:['science','offbeat'], pr:.7, why:'Never seen in a mammal before',
+ h:'Vesper bats turn out to carry two entirely separate sets of antibody genes',
+ u:'https://www.sciencedaily.com/releases/2026/09/260901010713.htm',
+ o:'ScienceDaily', also:['Live Science','Phys.org','SciTechDaily','Futurity','Earth.com','Science Advances'], pub:'2026-09-01T01:07',
+ sum:'More than 500 species of vesper bats carry two distinct sets of antibody heavy-chain genes on separate chromosomes, an arrangement never previously found in any mammal — every other known mammal builds them from one. One set holds 33 genes and refines its antibodies tightly onto single targets; the other holds 99 and mutates them less, producing broader, looser recognition. The Tulane, Stanford and CDC team behind the Science Advances paper think the pairing helps explain how bats carry dangerous viruses without falling ill.',
+ img:W+'5/56/ComputerHotline_-_Chiroptera_sp._%28by%29_%284%29.jpg', ik:'photo', ic:'Vesper bat · Wikimedia Commons',
+ kw:'bats antibodies immune system genetics evolution virus mammals biology'},
+
+{id:'s4', t:['science','health'], pr:.6,
+ h:'An injectable scaffold turned the cavity a stroke leaves behind into repair tissue',
+ u:'https://www.sciencedaily.com/releases/2026/09/260902234512.htm',
+ o:'ScienceDaily', also:['Duke Pratt School','Medical Xpress','ICT&health','Cell Biomaterials'], pub:'2026-09-02T23:45',
+ sum:'Rather than replacing lost tissue, the Duke material recruits the body’s own immune cells into the cavity a severe stroke leaves, including neutrophils that appear to switch from damaging to helpful. Treated mice grew new blood vessels and by eight weeks performed on a grid-walking coordination test at a level statistically comparable to healthy animals. When the researchers depleted immune cells, vessel formation collapsed — evidence the immune response is doing the work, not the scaffold alone.',
+ img:W+'4/49/MCA_Territory_Infarct.svg', ik:'mark', ic:'Infarct diagram · Wikimedia Commons',
+ kw:'stroke brain regeneration scaffold duke neurons blood vessels recovery medicine'},
+
+{id:'s5', t:['science'], pr:.5, why:'Nearly doubles the record',
+ h:'Burnt bone deep in a South African cave pushes hominid fire back to 1.79 million years',
+ u:'https://www.sciencenews.org/article/hominids-had-fire-longer-than-thought',
+ o:'Science News', also:['Scientific American','Smithsonian','ScienceDaily','Gizmodo','Sci.News','EurekAlert'], pub:'2026-09-02T11:00',
+ sum:'Researchers found burnt animal bone beneath previously analysed fire layers in Wonderwerk Cave, where the earliest accepted evidence had stood at about a million years. They borrowed a luminescence technique from forensics, never before used in archaeology, and confirmed it against fossilised barn owl pellets whose texture and colour had changed with heat. The material sat 30 metres inside the cave, which rules out a natural wildfire — H. erectus almost certainly could not start a fire, but could carry one in and keep it going.',
+ img:W+'7/71/Java_Man_holotype.jpg', ik:'photo', ic:'Homo erectus holotype · Wikimedia Commons',
+ kw:'archaeology fire hominid human evolution homo erectus prehistory discovery'},
+
+/* ---- HEALTH ---- */
+{id:'h1', t:['health'], pr:1, why:'First ctDNA-guided cancer approval',
+ h:'FDA clears the first cancer therapy guided by a resistance mutation in blood',
+ u:'https://www.fda.gov/news-events/press-announcements/fda-grants-accelerated-approval-new-breast-cancer-treatment',
+ o:'FDA', also:['The ASCO Post','UPI','CURE','Yahoo News'], pub:'2026-09-04T16:00',
+ sum:'Camizestrant, sold as Etcamah, won accelerated approval with a CDK4/6 inhibitor for HR-positive, HER2-negative advanced breast cancer once an ESR1 mutation is detected during existing therapy. Median progression-free survival from the point of ctDNA detection was 16.0 months against 9.2 on continued aromatase inhibitor treatment. It is the first approval that acts on a resistance mutation found in circulating tumour DNA before scans show the disease progressing.',
+ img:W+'f/f0/Chemotherapy_with_acral_cooling.jpg', ik:'photo', ic:'Chemotherapy · Wikimedia Commons',
+ kw:'fda breast cancer camizestrant esr1 ctdna approval oncology treatment drug'},
+
+{id:'h2', t:['health'], pr:.8,
+ h:'A once-nightly pill cut sleep apnea breathing events by 44% in phase 3',
+ u:'https://www.sciencedaily.com/releases/2026/08/260831015203.htm',
+ o:'ScienceDaily', also:['NeurologyLive','American Thoracic Society','Medical Xpress','Univ. of Pittsburgh','Apnimed'], pub:'2026-08-31T01:52',
+ sum:'AD109, a combination of aroxybutynin and atomoxetine that holds the throat muscles open, cut the apnea-hypopnea index by about 44% against 18% on placebo across 646 adults at 69 sites in the US and Canada. Every participant had either refused CPAP or been unable to tolerate it, which is the population masks have never reached. Roughly 21% stopped treatment over side effects — dry mouth, nausea, insomnia and difficulty urinating.',
+ img:W+'6/69/Obstruction_ventilation_apn%C3%A9e_sommeil.svg', ik:'mark', ic:'Airway obstruction diagram · Wikimedia Commons',
+ kw:'sleep apnea pill drug trial phase 3 breathing cpap treatment'},
+
+{id:'h3', t:['health'], pr:.65,
+ h:'Immune cells appear to remember obesity for up to a decade after weight loss',
+ u:'https://www.sciencedaily.com/releases/2026/08/260830000013.htm',
+ o:'ScienceDaily', also:['ScienceAlert','SciTechDaily','Inside Precision Medicine','News-Medical','EMBO Reports'], pub:'2026-08-30T00:00',
+ sum:'Obesity imprints CD4 T cells through DNA methylation, and the EMBO Reports team found the mark persists five to ten years after weight is lost, with autophagy and immune senescence as the likely mechanisms. It offers a mechanistic answer to a long-standing clinical puzzle: why people who lose weight stay at raised risk of type 2 diabetes, cardiovascular disease and some cancers. The clock on those risks does not reset at the scale.',
+ img:W+'7/73/FatCT2008_%28cropped%29.JPG', ik:'photo', ic:'CT imaging · Wikimedia Commons',
+ kw:'obesity weight loss immune cells inflammation metabolic health study'},
+
+{id:'h4', t:['health','tech'], pr:.5,
+ h:'AI predicted how strongly people would respond to a vaccine before they had it',
+ u:'https://www.sciencedaily.com/releases/2026/08/260820202842.htm',
+ o:'ScienceDaily', also:['News-Medical','GEN','Euronews','ASU News','Medical Xpress','Labmedica'], pub:'2026-08-20T20:28',
+ sum:'An Arizona State team measured antibodies against 185 antigens in blood from 4,000 healthy and immunosuppressed people, taken before and after COVID vaccination. Pre-existing antibodies to common microbes — what the authors call sentinel antibodies — consistently separated strong responders from weak ones in both groups. Lead author Joshua LaBaer says the profile could flag people at risk of a weak response before they are vaccinated, if it holds up for other vaccines.',
+ img:W+'3/30/Young_girl_about_to_receive_a_vaccine_in_her_upper_arm_%2848545990252%29.jpg', ik:'photo', ic:'Vaccination · Wikimedia Commons',
+ kw:'vaccine ai prediction antibodies immunology response model health'},
+
+{id:'h5', t:['health','food'], pr:.4,
+ h:'Utah health officials investigate a salmonella outbreak across two counties',
+ u:'https://www.foodsafetynews.com/2026/09/fda-outbreak-table-is-showing-17-investigations/',
+ o:'Food Safety News', also:['FDA'], pub:'2026-09-03T15:00',
+ sum:'The Bear River Health Department has identified 21 confirmed cases in Cache and Box Elder counties in northern Utah. It is one of seventeen investigations currently listed on the FDA’s outbreak table. The source has not been named publicly.',
+ img:W+'b/b4/SalmonellaNIAID.jpg', ik:'photo', ic:'Salmonella · NIAID / Wikimedia Commons',
+ kw:'salmonella outbreak utah food safety fda contamination illness'},
+
+/* ---- SPORT ---- */
+{id:'sp1', t:['sport'], pr:1,
+ h:'Alabama opens with a 48–10 win over East Carolina behind Keelon Russell',
+ u:'https://www.si.com/college-football/college-football-week-1-live-updates-scores-saturday',
+ o:'Sports Illustrated', also:['CBS Sports','ESPN','NCAA','Bleacher Report','Yahoo Sports'], pub:'2026-09-05T04:00',
+ sum:'The sophomore quarterback ran for 86 yards and a touchdown and threw for 256 as the 13th-ranked Tide put away East Carolina in Tuscaloosa. It was the first real look at Alabama’s offence under its new arrangement. Week 1 openers rarely settle much, but the dual-threat question was the one being asked.',
+ img:W+'1/19/Bryant%E2%80%93Denny_Stadium%2C_Tuscaloosa_AL%2C_North_view_20160714_1.jpg', ik:'photo', ic:'Bryant–Denny Stadium · Wikimedia Commons',
+ kw:'college football alabama east carolina keelon russell week 1 sec tide'},
+
+{id:'sp2', t:['sport'], pr:.85,
+ h:'Ohio State opens the title defence with a 56–3 win over Ball State',
+ u:'https://www.ncaa.com/live-updates/football/fbs/college-football-week-1-live-updates-schedule-scores-highlights',
+ o:'NCAA', also:['CBS Sports','ESPN','Sports Illustrated'], pub:'2026-09-05T03:30',
+ sum:'The top-ranked Buckeyes were never troubled in Columbus, leading comfortably by the interval. Georgia matched the pattern with a 63–3 win over Tennessee State the same afternoon. Week 1 scheduling means the top of the poll rarely learns much about itself.',
+ img:W+'e/e0/Ohio_Stadium_Overhead.jpg', ik:'photo', ic:'Ohio Stadium · Wikimedia Commons',
+ kw:'ohio state buckeyes ball state college football week 1 georgia'},
+
+{id:'sp3', t:['sport'], pr:.7, why:'Closest game of the day',
+ h:'Oregon survives Boise State 34–27 in the day’s tightest ranked matchup',
+ u:'https://bleacherreport.com/articles/25496444-brs-2026-college-football-winners-and-losers-week-1',
+ o:'Bleacher Report', also:['ESPN','CBS Sports'], pub:'2026-09-05T05:00',
+ sum:'The second-ranked Ducks were pushed to the final stretch by a Boise State side that has made a habit of it. It was the only single-digit margin among the day’s ranked games. Autzen has been an awkward opener for visiting teams for two decades, and this did not change that.',
+ img:W+'3/34/Autzen_Stadium_at_night.jpg', ik:'photo', ic:'Autzen Stadium · Wikimedia Commons',
+ kw:'oregon ducks boise state college football upset close game autzen'},
+
+{id:'sp4', t:['sport'], pr:.6,
+ h:'US Open third round runs at Flushing Meadows with semifinals still five days out',
+ u:'https://www.usopen.org/en_US/scores/completed_matches/index.html',
+ o:'US Open', also:['ESPN','ATP Tour','WTA'], pub:'2026-09-05T06:00',
+ sum:'Saturday is a third-round day on both singles draws, with the men’s and women’s semifinals not scheduled until 10 September. The tournament has already produced a 42-year-old former three-time doubles champion back in the draw. Attention through the weekend stays on the bottom half of the men’s bracket.',
+ img:W+'c/c7/Arthur_Ashe_Stadium_with_the_roof_closed_%2832938595438%29.jpg', ik:'photo', ic:'Arthur Ashe Stadium · Wikimedia Commons',
+ kw:'us open tennis flushing meadows third round grand slam atp wta'},
+
+{id:'sp5', t:['sport'], pr:.5, why:'Two-touchdown underdog won',
+ h:'Tulsa beats Oklahoma State 24–10 and ruins Eric Morris’s first game',
+ u:'https://sports.yahoo.com/articles/tulsa-stuns-oklahoma-state-again-235425753.html',
+ o:'Yahoo Sports', also:['Deadspin','KRMG','Underdog Dynasty','The Ticket'], pub:'2026-09-05T05:30',
+ sum:'Tulsa came in as near two-touchdown underdogs and led wire to wire at H. A. Chapman Stadium, with Damari Alston running for two scores and Baylor Hayes throwing a third. Seventeen of the Golden Hurricane’s points came off failed Oklahoma State fourth downs; the Cowboys went 2-for-6 on fourth and reached the end zone once. Tulsa did not convert a third down until three minutes remained, finishing 1-for-11, and won anyway.',
+ img:'', ik:'none', ic:'',
+ kw:'oklahoma state tulsa eric morris college football upset cowboys debut golden hurricane'},
+
+/* ---- FOOD & COOKING ---- */
+{id:'f1', t:['food','economy'], pr:1,
+ h:'Starbucks closed 627 locations in three months, most of them in North America',
+ u:'https://www.restaurantdive.com/news/recent-restaurant-chain-closures-signal-market-correction/817740/',
+ o:'Restaurant Dive', also:['Yahoo Finance','Nation’s Restaurant News','CNBC'], pub:'2026-09-03T11:00',
+ sum:'More than 90% of the closures were in North America, part of what analysts are calling a market correction rather than a collapse. The shutdowns are concentrated among weaker operators and older formats. Casual dining, meanwhile, has been quietly recovering through the second quarter.',
+ img:W+'a/ad/Starbuckscenter.jpg', ik:'photo', ic:'Starbucks Center, Seattle · Wikimedia Commons',
+ kw:'starbucks closures restaurants coffee chain retail market correction'},
+
+{id:'f2', t:['food','economy'], pr:.8, why:'Rising faster than the menu',
+ h:'Restaurant coffee prices jump 5.4% as weather and labour costs bite',
+ u:'https://foodinstitute.com/foodservice/restaurant-coffee-prices-jolt-up-five-percent/',
+ o:'The Food Institute', also:['Restaurant Dive','Toast'], pub:'2026-09-02T10:00',
+ sum:'Coffee is climbing faster than the rest of foodservice, pushed by weather shocks in growing regions and labour pressure through the supply chain. Food-away-from-home prices overall are forecast to rise 4.6% across 2026. Cafés have less room than full-service restaurants to absorb it before it reaches the board.',
+ img:W+'e/e4/Latte_and_dark_coffee.jpg', ik:'photo', ic:'Coffee · Wikimedia Commons',
+ kw:'coffee prices restaurants inflation cafe foodservice costs beans'},
+
+{id:'f3', t:['food'], pr:.65,
+ h:'Chain closures are concentrated among weak operators, not the whole sector',
+ u:'https://finance.yahoo.com/news/2026-closures-4-chains-shutter-190300333.html',
+ o:'Yahoo Finance', also:['Restaurant Dive','FE&S'], pub:'2026-09-02T12:00',
+ sum:'Four chains are shuttering hundreds of locations between them this year, but the pattern points to a shakeout rather than systemic trouble. Fast casual sales have stabilised while quick service posted mixed results. Rising fuel prices and softer consumer confidence are the two things most likely to accelerate it.',
+ img:W+'6/62/Barbieri_-_ViaSophia25668.jpg', ik:'photo', ic:'Restaurant · Wikimedia Commons',
+ kw:'restaurant closures chains fast casual quick service dining industry'},
+
+{id:'f4', t:['food','economy'], pr:.5,
+ h:'Restaurant sales are forecast to reach $1.55 trillion this year',
+ u:'https://restaurant.org/research-and-media/research/research-reports/state-of-the-industry/',
+ o:'National Restaurant Association', also:['FE&S'], pub:'2026-09-01T09:00',
+ sum:'Industry sales are projected at $1.55 trillion nationwide with real gains of about 1.3%, which is growth almost entirely accounted for by price. Operators describe the outlook as cautiously optimistic. The gap between nominal and real growth is the whole story of the year.',
+ img:W+'b/b0/Hamburger_%2812164386105%29.jpg', ik:'photo', ic:'Fast food · Wikimedia Commons',
+ kw:'restaurant industry sales forecast revenue dining spending economy'},
+
+{id:'f5', t:['food'], pr:.4,
+ h:'Fermentation moves from technique to menu strategy',
+ u:'https://www.jamesbeard.org/stories/top-restaurant-food-trends-2026',
+ o:'James Beard Foundation', also:['Penn State Extension'], pub:'2026-09-01T10:00',
+ sum:'Kitchens are treating deliberate fermentation as a core method rather than a garnish, alongside savoury cocktails, large plates and lower-priced tasting menus. The draw is three-way: flavour, shelf life and waste reduction. Diners are increasingly aware of the health argument, which is doing some of the selling.',
+ img:W+'2/22/Tomb_of_Nakht_%2813%29.jpg', ik:'photo', ic:'Ancient brewing, Tomb of Nakht · Wikimedia Commons',
+ kw:'fermentation cooking food trends restaurants chefs technique menu'},
+
+/* ---- FILM & TV ---- */
+{id:'m1', t:['film'], pr:1, why:'A24’s biggest film ever',
+ h:'“Backrooms” becomes A24’s highest-grossing film, made for under $10 million',
+ u:'https://www.hollywoodreporter.com/movies/movie-news/backrooms-becomes-a24s-highest-grossing-movie-domestically-1236611738/',
+ o:'The Hollywood Reporter', also:['Variety','Deadline','CBC','The Wrap'], pub:'2026-09-02T14:00',
+ sum:'The horror film has taken $212 million worldwide including $135 million domestically, passing “Marty Supreme” to become A24’s biggest release. Kane Parsons was 19 when A24 hired him off YouTube and is now, at 20, the youngest director ever to top the box office. Chiwetel Ejiofor plays a shop owner who finds a door into an endless run of empty rooms; Renate Reinsve is the therapist who goes in after him.',
+ img:W+'b/b7/A24_logo.svg', ik:'mark', ic:'A24 · Wikimedia Commons',
+ kw:'backrooms a24 box office horror kane parsons film movie record ejiofor'},
+
+{id:'m2', t:['film'], pr:.8,
+ h:'“Toy Story 5” lands on Disney+ after a $1.13 billion summer',
+ u:'https://variety.com/lists/best-movies-streaming-september-2026/',
+ o:'Variety', also:['The Wrap','Boston.com'], pub:'2026-09-01T12:00',
+ sum:'The film arrives on streaming this month having finished as the third highest-grossing release of 2026 so far. Its theatrical window was unusually long for a Pixar title. The streaming date puts it in the same month as several of the year’s other large titles.',
+ img:'', ik:'none', ic:'',
+ kw:'toy story pixar disney plus streaming box office animation sequel'},
+
+{id:'m3', t:['film'], pr:.65,
+ h:'“The Paper”, the Office spinoff, drops all at once on Peacock',
+ u:'https://deadline.com/feature/2026-tv-premiere-dates-1236391902/',
+ o:'Deadline', also:['The Hollywood Reporter','Boston.com'], pub:'2026-09-01T13:00',
+ sum:'Peacock is releasing the full season on 9 September rather than weekly, a choice that runs against where most comedy has been drifting. The series shares a documentary crew conceit with its parent show. It is the most-watched item on a crowded September premiere calendar.',
+ img:'', ik:'none', ic:'',
+ kw:'the paper office spinoff peacock comedy premiere streaming television'},
+
+{id:'m4', t:['film'], pr:.55,
+ h:'“Slow Horses” returns for a sixth season on Apple TV',
+ u:'https://www.hollywoodreporter.com/lists/2026-tv-premiere-dates-calendar/',
+ o:'The Hollywood Reporter', also:['Boston.com'], pub:'2026-09-01T13:30',
+ sum:'The spy series is back on 16 September, one of the few prestige returns in a month otherwise dominated by new launches. It has kept an unusually steady annual cadence for a show of its budget. The source novels remain several books ahead of the adaptation.',
+ img:'https://upload.wikimedia.org/wikipedia/en/a/ae/Apple_TV_%28logo%29.svg', ik:'mark', ic:'Apple TV · Wikimedia',
+ kw:'slow horses apple tv spy series season 6 premiere television gary oldman'},
+
+{id:'m5', t:['film'], pr:.45,
+ h:'Netflix takes “Monster” back to 1892 and the Lizzie Borden axe murders',
+ u:'https://www.tvguide.com/news/monster-season-4-lizzie-borden-cast-premiere-date-trailer/',
+ o:'TV Guide', also:['TV Insider','What’s on Netflix','Netflix Tudum','CBS Boston'], pub:'2026-09-01T14:00',
+ sum:'All eight episodes land on 17 September, with Ella Beatty as Lizzie and Charlie Hunnam as her father Andrew. It is the furthest back Ryan Murphy’s anthology has reached, trading twentieth-century American crime for Fall River, Massachusetts in 1892. The case has been dramatised for a century, and the acquittal is the part that keeps pulling writers back to it.',
+ img:W+'7/71/Lizzie_Borden_1890.jpg', ik:'photo', ic:'Lizzie Borden, 1890 · Wikimedia Commons',
+ kw:'monster netflix lizzie borden anthology true crime series ryan murphy'},
+
+/* ---- OFFBEAT ---- */
+{id:'o1', t:['offbeat'], pr:1, why:'One AP story, five syndications',
+ h:'Teenagers across Latin America are holding public “aura battles”',
+ u:'https://www.washingtonpost.com/world/2026/09/01/farming-aura-trend-latin-america-farmeando-aura/ceb51ce8-a669-11f1-9e38-f705d048bd5a_story.html',
+ o:'The Washington Post', also:['AP','NY1','WFTV','Lancaster Online','KDH News'], pub:'2026-09-01T16:00',
+ sum:'An internet trend called aura farming has moved into beaches, parks and plazas, where two competitors try to out-charisma each other through dance, poses and costume while a crowd picks the winner by sheer volume. Contestants turn up dressed as comic book and animated film characters. The battles have spread through Mexico City, Quito and Buenos Aires, where dozens squared off in front of the Obelisk, and on to Madrid, Burgos and Zaragoza.',
+ img:W+'f/fc/Buenos_Aires_%2820234294752%29.jpg', ik:'photo', ic:'Obelisco, Buenos Aires · Wikimedia Commons',
+ kw:'aura farming battles latin america trend teenagers viral dance buenos aires'},
+
+{id:'o2', t:['offbeat'], pr:.9,
+ h:'At 91, “Grey Beard” takes back the Appalachian Trail record he lost',
+ u:'https://edition.cnn.com/2026/09/01/travel/dale-sanders-grey-beard-oldest-appalachian-trail-hiker',
+ o:'CNN', also:['AP','PBS NewsHour','The Trek','WBIR','WNDU'], pub:'2026-09-01T15:00',
+ sum:'Dale Sanders finished the 2,193-mile trail on 31 August, reclaiming the record for the oldest person to thru-hike it. He first set it in 2017 at age 82, lost it four years later to an 83-year-old friend, and announced his comeback within months. The walk took 359 days, and by his own count he fell 71 times — six of them hard, one about 200 yards from the finish.',
+ img:W+'2/24/Appalachian_Trail_Marker_Logo.svg', ik:'mark', ic:'Trail marker · Wikimedia Commons',
+ kw:'appalachian trail hiking record dale sanders grey beard oldest thru-hike'},
+
+{id:'o3', t:['offbeat'], pr:.75,
+ h:'Thieves take 34,000 cans of Pabst from the same warehouse twice in one day',
+ u:'https://www.nbcnews.com/news/us-news/no-pint-sized-matter-thieves-steal-70000-pabst-beer-california-warehou-rcna595482',
+ o:'NBC News', also:['Fox 11','The Washington Times','ClickOrlando','SJV Sun'], pub:'2026-08-31T11:19',
+ sum:'A load of beer worth $45,000 was collected from an Anheuser-Busch distribution centre in Montclair, California, and never delivered to Tucson. An hour later a purported subcontractor used forged paperwork to collect another $25,000 worth from the same dock. Police put the total at $70,000 and are still working out whether the two pickups were one operation; Pabst has turned the whole thing into a social media bit.',
+ img:'https://media-cldnry.s-nbcnews.com/image/upload/t_fit-560w,f_avif,q_auto:best/rockcms/2026-09/260901-pabst-rs-921ece.jpg',
+ ik:'photo', ic:'NBC News',
+ kw:'pabst beer theft heist california warehouse crime anheuser-busch montclair'},
+
+{id:'o4', t:['offbeat'], pr:.6,
+ h:'Hundreds turn out to judge a Mamdani look-alike contest',
+ u:'https://www.nbcnewyork.com/new-york-city/mamdani-look-alike-contest-winner-amadeo-fusca/6542000/',
+ o:'NBC New York', also:['ABC7 New York','The Washington Post','NY1','Ynet'], pub:'2026-08-31T20:00',
+ sum:'Nine contestants gathered by the Washington Square Park arch in brown campaign suits, patterned ties and silver rings; one arrived wearing only an apron, a reference to a 2019 rap video. Amadeo Fusca won a $100 prize in a Knicks jersey under a suit, chosen by applause after each entrant named a favourite pizza. Police moved the event just outside the park partway through because organisers had no permit.',
+ img:W+'2/20/Washington_Square_Arch_%2840430304445%29.jpg', ik:'photo', ic:'Washington Square Arch · Wikimedia Commons',
+ kw:'mamdani lookalike contest new york washington square park mayor viral'},
+
+{id:'o5', t:['offbeat','science'], pr:.5, why:'The bison that isn’t',
+ h:'Beefalo are bred to be part bison. Most of them aren’t.',
+ u:'https://www.sciencenews.org/article/beefalo-no-buffalo-genes',
+ o:'Science News', also:['eLife','Yahoo News','The Cool Down','bioRxiv','Smore Science'], pub:'2026-09-02T12:00',
+ sum:'A UC Santa Cruz team led by Beth Shapiro sequenced preserved semen from 47 animals, most collected in the 1970s and 80s and several from the original herd. Thirty-nine showed no detectable bison ancestry at all, and the remaining eight fell short of the American Beefalo Association’s three-eighths standard. The breed has been sold on a claim of 37.5% bison for decades; sex chromosome analysis shows what bison ancestry there is came in through bulls.',
+ img:W+'3/35/XJ-B1_Beefalo.jpg', ik:'photo', ic:'Beefalo · Wikimedia Commons',
+ kw:'beefalo bison cattle hybrid genome dna breed genetics livestock'}
+];
+
+/* ==========================================================================
+   3. SCORING & CLUSTERING
+   ========================================================================== */
+const STOP = new Set(('a an the and or but of in on at to for with from by as is are was were be been '+
+  'that this these those it its his her their our your after before over under into out up down new '+
+  'says said say more most than then them they he she we you i not no yes has have had will would could '+
+  'about across against among around back off through during').split(' '));
+
+const tokens = s => s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w => w.length>2 && !STOP.has(w));
+
+function jaccard(a, b) {
+  const A = new Set(a), B = new Set(b);
+  let inter = 0;
+  A.forEach(x => { if (B.has(x)) inter++; });
+  const union = A.size + B.size - inter;
+  return union ? inter / union : 0;
+}
+
+/* Collapse near-duplicates. Union-find over title-token overlap; the highest
+   scoring member represents the cluster and absorbs the others' outlets. */
+function cluster(items) {
+  const parent = items.map((_, i) => i);
+  const find = i => parent[i] === i ? i : (parent[i] = find(parent[i]));
+  const toks = items.map(s => tokens(s.h + ' ' + (s.kw || '')));
+  for (let i = 0; i < items.length; i++) {
+    for (let j = i + 1; j < items.length; j++) {
+      if (jaccard(toks[i], toks[j]) >= CLUSTER_THRESHOLD) parent[find(i)] = find(j);
+    }
+  }
+  const groups = new Map();
+  items.forEach((s, i) => {
+    const r = find(i);
+    if (!groups.has(r)) groups.set(r, []);
+    groups.get(r).push(s);
+  });
+  return [...groups.values()].map(g => {
+    if (g.length === 1) return g[0];
+    g.sort((a, b) => b._score - a._score);
+    const head = Object.assign({}, g[0]);
+    const extra = new Set(head.also || []);
+    g.slice(1).forEach(x => { extra.add(x.o); (x.also || []).forEach(o => extra.add(o)); });
+    head.also = [...extra].filter(o => o !== head.o);
+    head._merged = g.length - 1;
+    return head;
+  });
+}
+
+const hoursSince = iso => Math.max(0, (NOW - new Date(iso)) / 36e5);
+const outletCount = s => 1 + (s.also ? s.also.length : 0);
+
+/* Topic fit: a preset topic is a declared membership; a custom topic is scored
+   on how much of it actually shows up in the headline, summary and keywords. */
+function topicFit(story, topic) {
+  if (topic.custom) {
+    const hay = (story.h + ' ' + story.sum + ' ' + (story.kw || '') + ' ' +
+                 story.t.map(x => T[x]).join(' ')).toLowerCase();
+    const terms = topic.id.toLowerCase().split(/\s+/).filter(Boolean);
+    let hits = 0;
+    terms.forEach(t => {
+      const safe = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Whole word plus ordinary inflections. Truncating to a stem instead looks
+      // clever and quietly matches "saturn" against "Saturday", so: don't.
+      const pattern = '\\b' + safe + '(?:s|es|ed|ing|d)?\\b';
+      if (new RegExp(pattern).test(hay)) hits += 1;
+    });
+    return terms.length ? hits / terms.length : 0;
+  }
+  if (!story.t.includes(topic.id)) return 0;
+  return story.t[0] === topic.id ? 1 : 0.72; // primary topic beats a cross-listing
+}
+
+function score(story, topic) {
+  const corr = Math.min(1, Math.log2(outletCount(story) + 1) / Math.log2(9));
+  const rec  = Math.pow(0.5, hoursSince(story.pub) / RECENCY_HALFLIFE_HOURS);
+  const fit  = topicFit(story, topic);
+  return WEIGHTS.corroboration * corr
+       + WEIGHTS.recency       * rec
+       + WEIGHTS.sourceTier    * tierOf(story.o)
+       + WEIGHTS.topicFit      * fit
+       + WEIGHTS.prominence    * (story.pr || 0.5);
+}
+
+/* Everything still unclaimed that this topic could legitimately run. */
+function candidates(topic, used) {
+  return CORPUS
+    .map(s => Object.assign({}, s, { _score: score(s, topic), _fit: topicFit(s, topic) }))
+    .filter(s => s._fit > (topic.custom ? 0.34 : 0))
+    .filter(s => !used.has(s.id));
+}
+
+/* Assembly runs in three passes so that no section can quietly poach a story
+   out from under the section it actually belongs to. A story appears once. */
+function buildBrief(topics) {
+  const used = new Set();
+  const picks = topics.map(() => []);
+
+  const take = (i, topic, pool) => {
+    const room = 5 - picks[i].length;
+    if (room <= 0) return;
+    const chosen = cluster(pool).sort((a, b) => b._score - a._score).slice(0, room);
+    chosen.forEach(s => used.add(s.id));
+    picks[i] = picks[i].concat(chosen);
+  };
+
+  // 1. A topic you typed yourself is a more specific request than any preset, so it picks first.
+  topics.forEach((t, i) => { if (t.custom) take(i, t, candidates(t, used)); });
+  // 2. Each preset claims the stories whose primary topic it is.
+  topics.forEach((t, i) => {
+    if (!t.custom) take(i, t, candidates(t, used).filter(s => s.t[0] === t.id));
+  });
+  // 3. Anything still short of five backfills from cross-listed stories.
+  topics.forEach((t, i) => take(i, t, candidates(t, used)));
+
+  const sections = topics.map((t, i) => ({
+    topic: t,
+    stories: picks[i].sort((a, b) => b._score - a._score)
+  }));
+  const all = sections.flatMap(s => s.stories.map(x => Object.assign({}, x, { _topic: s.topic })));
+  const top = [...all].sort((a, b) => b._score - a._score).slice(0, 3);
+  return { sections, top };
+}
+
+/* ==========================================================================
+   4. STATE
+   ========================================================================== */
+const PRESETS = Object.keys(T);
+const DEFAULTS = ['world','politics','economy','tech','science','offbeat'];
+const KEY = 'morningbrief.topics.v1';
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) { const v = JSON.parse(raw); if (Array.isArray(v) && v.length) return v; }
+  } catch (e) { /* file:// or blocked storage — fall through to defaults */ }
+  return DEFAULTS.map(id => ({ id, custom: false }));
+}
+function save(topics) {
+  try { localStorage.setItem(KEY, JSON.stringify(topics)); } catch (e) { /* not fatal */ }
+}
+let TOPICS = load();
+const labelOf = t => t.custom ? t.id.replace(/\b\w/g, c => c.toUpperCase()) : T[t.id];
+
+/* ==========================================================================
+   5. RENDER
+   ========================================================================== */
+const el = (tag, cls, html) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (html !== undefined) n.innerHTML = html;
+  return n;
+};
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function relTime(iso) {
+  const h = hoursSince(iso);
+  if (h < 1) return 'just now';
+  if (h < 24) return Math.round(h) + 'h ago';
+  const d = Math.round(h / 24);
+  return d === 1 ? 'yesterday' : d + ' days ago';
+}
+
+function tallyHTML(n) {
+  return '<span class="tally" aria-hidden="true">' + '<i></i>'.repeat(Math.min(n, 12)) + '</span>';
+}
+
+function shotHTML(s, extraClass) {
+  const cls = 'shot ' + (s.ik === 'mark' ? 'mark ' : '') + (extraClass || '');
+  if (!s.img) {
+    return '<div class="' + cls + '"><div class="fallback"><span>' + esc(s.o) +
+           '<br>No photograph available</span></div></div>';
+  }
+  return '<div class="' + cls + '"><img src="' + esc(s.img) + '" alt="' + esc(s.ic || s.h) +
+         '" loading="lazy" referrerpolicy="no-referrer"></div>';
+}
+
+function whyOf(s) {
+  if (s.why) return s.why;
+  const n = outletCount(s);
+  return n > 1 ? 'Covered by ' + n + ' outlets' : 'Single source';
+}
+
+function storyHTML(s, variant) {
+  const n = outletCount(s);
+  const also = (s.also && s.also.length)
+    ? '<div class="alsoin"><b>Also in</b> ' + s.also.slice(0, 7).map(esc).join(' &middot; ') + '</div>' : '';
+  const meta = '<div class="story-meta">' + tallyHTML(n) +
+               '<span class="why">' + esc(whyOf(s)) + '</span></div>';
+  const head = '<h3><a href="' + esc(s.u) + '" target="_blank" rel="noopener noreferrer">' + esc(s.h) + '</a></h3>';
+  const body = '<p>' + esc(s.sum) + '</p>';
+  const cred = '<div class="credit"><span class="outlet">' + esc(s.o) + '</span><span class="sep">/</span><span>' +
+               relTime(s.pub) + '</span>' + (s.ic ? '<span class="sep">/</span><span>' + esc(s.ic) + '</span>' : '') +
+               '</div>';
+
+  if (variant === 'lead') {
+    const a = el('article', 'story lead');
+    a.innerHTML = shotHTML(s) + meta + head + body + cred + also;
+    return a;
+  }
+  const a = el('article', 'story row');
+  a.innerHTML = shotHTML(s) + '<div>' + meta + head + body + cred + also + '</div>';
+  return a;
+}
+
+function topCardHTML(s) {
+  const a = el('article', 'tcard');
+  a.innerHTML = shotHTML(s) +
+    '<div class="story-meta">' + tallyHTML(outletCount(s)) +
+    '<span class="why">' + esc(whyOf(s)) + '</span></div>' +
+    '<h3><a href="' + esc(s.u) + '" target="_blank" rel="noopener noreferrer">' + esc(s.h) + '</a></h3>' +
+    '<p>' + esc(s.sum.split('. ')[0]) + '.</p>' +
+    '<div class="credit"><span class="outlet">' + esc(s.o) + '</span><span class="sep">/</span><span>' +
+    esc(labelOf(s._topic)) + '</span></div>';
+  return a;
+}
+
+function render() {
+  const brief = document.getElementById('brief');
+  brief.innerHTML = '';
+  const { sections, top } = buildBrief(TOPICS);
+  const total = sections.reduce((n, s) => n + s.stories.length, 0);
+
+  document.getElementById('dlDate').textContent =
+    NOW.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  document.getElementById('dlBuilt').textContent = 'Built 07:10';
+  document.getElementById('dlCount').textContent =
+    TOPICS.length + (TOPICS.length === 1 ? ' topic' : ' topics') + ' · ' + total +
+    (total === 1 ? ' story' : ' stories');
+
+  if (!TOPICS.length) {
+    const n = el('div', 'nothing', '<p>No topics selected.</p>' +
+      '<p style="font-size:.9rem">Open <strong>Your topics</strong> above and pick a few.</p>');
+    brief.appendChild(n);
+    return;
+  }
+
+  /* In one minute */
+  if (total) {
+    const om = el('section', 'oneminute');
+    const bullets = sections
+      .filter(s => s.stories.length)
+      .slice(0, 6)
+      .map(s => {
+        const lead = s.stories[0];
+        return '<li>' + esc(lead.h.replace(/\.$/, '')) + '.</li>';
+      }).join('');
+    om.innerHTML = '<p class="om-head">In one minute</p><ul>' + bullets + '</ul>';
+    brief.appendChild(om);
+  }
+
+  /* Top of the brief */
+  if (top.length >= 2) {
+    const ts = el('section', 'topsec');
+    ts.innerHTML = '<div class="section-rule"><h2>Top of the brief</h2>' +
+      '<span class="meta">Across all your topics</span></div>';
+    const g = el('div', 'topgrid');
+    top.forEach(s => g.appendChild(topCardHTML(s)));
+    ts.appendChild(g);
+    brief.appendChild(ts);
+  }
+
+  /* Topic sections */
+  sections.forEach(({ topic, stories }) => {
+    const sec = el('section', 'topic');
+    sec.innerHTML = '<div class="section-rule"><h2>' + esc(labelOf(topic)) + '</h2>' +
+      '<span class="meta">' + (stories.length ? stories.length + (stories.length === 1 ? ' story' : ' stories') : 'nothing today') +
+      '</span></div>';
+    if (!stories.length) {
+      sec.appendChild(el('div', 'empty',
+        'Nothing in this morning’s corpus matches <code>' + esc(labelOf(topic)) +
+        '</code>. Try a broader term, or one of the preset topics.'));
+    } else {
+      stories.forEach((s, i) => sec.appendChild(storyHTML(s, i === 0 ? 'lead' : 'row')));
+    }
+    brief.appendChild(sec);
+  });
+
+  renderPicker();
+}
+
+/* ==========================================================================
+   6. PICKER
+   ========================================================================== */
+function countsFor(id) {
+  return CORPUS.filter(s => s.t.includes(id)).length;
+}
+
+function renderPicker() {
+  const count = document.getElementById('pickerCount');
+  count.textContent = TOPICS.length + ' / 10';
+  count.classList.toggle('full', TOPICS.length >= 10);
+
+  const row = document.getElementById('selectedRow');
+  row.innerHTML = '';
+  TOPICS.forEach((t, i) => {
+    const tag = el('span', 'seltag');
+    tag.draggable = true;
+    tag.dataset.i = i;
+    tag.innerHTML = '<span class="ord">' + (i + 1) + '</span>' + esc(labelOf(t)) +
+                    '<button type="button" aria-label="Remove ' + esc(labelOf(t)) + '">&times;</button>';
+    tag.querySelector('button').addEventListener('click', e => {
+      e.stopPropagation();
+      TOPICS.splice(i, 1); save(TOPICS); render();
+    });
+    tag.addEventListener('dragstart', e => {
+      tag.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', String(i));
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    tag.addEventListener('dragend', () => tag.classList.remove('dragging'));
+    tag.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    tag.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      const to = parseInt(tag.dataset.i, 10);
+      if (isNaN(from) || from === to) return;
+      const [moved] = TOPICS.splice(from, 1);
+      TOPICS.splice(to, 0, moved);
+      save(TOPICS); render();
+    });
+    row.appendChild(tag);
+  });
+
+  const chips = document.getElementById('presetChips');
+  chips.innerHTML = '';
+  PRESETS.forEach(id => {
+    const on = TOPICS.some(t => !t.custom && t.id === id);
+    const b = el('button', 'chip', esc(T[id]) + '<span class="n">' + countsFor(id) + '</span>');
+    b.type = 'button';
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.disabled = !on && TOPICS.length >= 10;
+    b.addEventListener('click', () => {
+      if (on) TOPICS = TOPICS.filter(t => t.custom || t.id !== id);
+      else if (TOPICS.length < 10) TOPICS.push({ id, custom: false });
+      save(TOPICS); render();
+    });
+    chips.appendChild(b);
+  });
+
+  document.getElementById('customBtn').disabled = TOPICS.length >= 10;
+  document.getElementById('customInput').disabled = TOPICS.length >= 10;
+}
+
+document.getElementById('customForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('customInput');
+  const v = input.value.trim().toLowerCase();
+  if (!v || TOPICS.length >= 10) return;
+  if (TOPICS.some(t => (t.custom ? t.id : T[t.id].toLowerCase()) === v)) { input.value = ''; return; }
+  TOPICS.push({ id: v, custom: true });
+  input.value = '';
+  save(TOPICS);
+  render();
+  document.getElementById('picker').classList.add('open');
+  document.getElementById('pickerBody').hidden = false;
+  document.getElementById('pickerBar').setAttribute('aria-expanded', 'true');
+});
+
+const picker = document.getElementById('picker');
+const pickerBar = document.getElementById('pickerBar');
+const pickerBody = document.getElementById('pickerBody');
+pickerBar.addEventListener('click', () => {
+  const open = picker.classList.toggle('open');
+  pickerBody.hidden = !open;
+  pickerBar.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+
+/* theme + print */
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const next = cur ? (cur === 'dark' ? 'light' : 'dark') : (sysDark ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', next);
+});
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+render();
+</script>
+</body>
+</html>

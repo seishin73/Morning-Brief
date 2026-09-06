@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning Brief</title>
+<meta name="description" content="The day's most-corroborated stories, by topic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B1116'/><circle cx='16' cy='21' r='7' fill='%23EFAE52'/><rect x='3' y='21' width='26' height='2' fill='%230B1116'/></svg>">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="mast-top">
+      <h1>Morning&nbsp;Brief</h1>
+      <div class="mast-actions">
+        <button class="iconbtn" id="refreshBtn" type="button">Refresh</button>
+        <button class="iconbtn" id="themeBtn" type="button">Theme</button>
+        <button class="iconbtn" id="printBtn" type="button">Print</button>
+      </div>
+    </div>
+    <div class="dateline">
+      <span id="dlDate"></span>
+      <span class="now" id="dlBuilt"></span>
+      <span id="dlCount"></span>
+      <span class="warn" id="dlWarn" hidden></span>
+    </div>
+  </header>
+
+  <div class="picker" id="picker">
+    <button class="picker-bar" id="pickerBar" type="button" aria-expanded="false" aria-controls="pickerBody">
+      <span class="picker-label">Your topics <span class="chev">&#9660;</span></span>
+      <span class="picker-count" id="pickerCount">0 / 10</span>
+    </button>
+    <div class="picker-body" id="pickerBody" hidden>
+      <div class="selected-row" id="selectedRow" role="list" aria-label="Selected topics, in order"></div>
+      <p class="picker-sub">Choose from</p>
+      <div class="chips" id="presetChips"></div>
+      <p class="picker-sub">Or add your own</p>
+      <form class="custom-form" id="customForm">
+        <input type="text" id="customInput" placeholder="Anything &mdash; &ldquo;ukraine&rdquo;, &ldquo;nvidia&rdquo;, &ldquo;wildfires&rdquo;" maxlength="40" autocomplete="off">
+        <button type="submit" id="customBtn">Add</button>
+      </form>
+      <p class="hint">Reorder with the arrows, by dragging, or with the left and right arrow keys. Up to ten topics. Custom topics search every outlet Google News indexes.</p>
+    </div>
+  </div>
+
+  <main id="brief"></main>
+
+  <p class="colophon">
+    <b>How stories are chosen.</b> Every candidate is scored on five signals &mdash; how many
+    independent outlets carry it, how recently it broke, the standing of the outlet, how well it
+    fits the topic, and how high it sat on its own section front. Corroboration is weighted
+    heaviest, so the tally marks beside each headline are close to the ranking itself.
+    Near-duplicates are clustered across the whole pool before any topic is considered, so a story
+    carried by one outlet's world desk and another's politics desk still counts as two.<br>
+    <b>Sourcing.</b> Headlines link to the original publication. Summaries come from each outlet's
+    own feed, cleaned up; no article text is reproduced. Photographs come from the publisher's feed
+    where there is one, then the article's own social image, then a freely-licensed photograph of
+    the subject from Wikimedia Commons.<br>
+    <b>This build.</b> Live. Feeds are read directly from around seventy newsrooms and re-read
+    every twenty minutes; ranking, clustering and assembly run on your own machine.
+  </p>
+
+</div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
