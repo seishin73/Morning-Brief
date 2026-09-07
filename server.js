@@ -128,7 +128,11 @@ async function apiBrief(url) {
   };
 }
 
-const server = http.createServer(async (req, res) => {
+// The request handler is named and exported so the same code can run two ways:
+// as a long-lived server locally (server.listen below), and as the entrypoint
+// Vercel invokes. Without the export, Vercel has to guess which file is the
+// server and can pick a browser script by mistake.
+export const handler = async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const send = (code, body, type = 'application/json; charset=utf-8') => {
     res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' });
@@ -162,11 +166,20 @@ const server = http.createServer(async (req, res) => {
     log('error:', err.message);
     return send(500, JSON.stringify({ error: err.message }));
   }
-});
+};
+
+const server = http.createServer(handler);
 
 await loadCache();
-server.listen(PORT, () => {
-  log(process.env.VERCEL ? `Morning Brief listening on :${PORT}` : `Morning Brief on http://localhost:${PORT}`);
-  // Warm the pool at boot so the first reader doesn't wait on seventy feeds.
-  ensurePool().catch(e => log('initial fetch failed:', e.message));
-});
+// Locally: start the long-lived server and warm the pool at boot so the first
+// reader doesn't wait on seventy feeds. On Vercel the platform invokes `handler`
+// directly, so binding a port here would be wrong — the pool is filled lazily by
+// the first /api/brief request instead.
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    log(`Morning Brief on http://localhost:${PORT}`);
+    ensurePool().catch(e => log('initial fetch failed:', e.message));
+  });
+}
+
+export default handler;

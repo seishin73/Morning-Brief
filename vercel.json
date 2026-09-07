@@ -1,12 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "headers": [
+  "builds": [
+    { "src": "server.js", "use": "@vercel/node" }
+  ],
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "referrer-policy", "value": "no-referrer" },
-        { "key": "x-content-type-options", "value": "nosniff" }
-      ]
+      "src": "/(.*)",
+      "headers": {
+        "referrer-policy": "no-referrer",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/server.js"
     }
   ]
 }
