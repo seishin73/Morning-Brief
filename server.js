@@ -114,6 +114,19 @@ async function apiBrief(url) {
     if (m) { t.image = m.image; t.imageCredit = m.imageCredit; t.imageKind = m.imageKind; t.summary = m.summary; }
   });
 
+  // Write the resolved images and rewritten summaries back onto the pooled
+  // originals. assemble() hands out shallow copies, so without this the work is
+  // discarded when the response ends and every page load repeats it — which for
+  // summarise() means paying for the same Anthropic calls again on every reader,
+  // instead of once per 20-minute pool refresh.
+  const pooled = new Map(base.stories.map(s => [s.key, s]));
+  shown.forEach(s => {
+    const o = pooled.get(s.key);
+    if (!o) return;                       // custom-topic stories aren't in the pool
+    if (s.summary) o.summary = s.summary;
+    if (s.image) { o.image = s.image; o.imageCredit = s.imageCredit; o.imageKind = s.imageKind; }
+  });
+
   return {
     builtAt: new Date().toISOString(),
     fetchedAt: new Date(base.at).toISOString(),
